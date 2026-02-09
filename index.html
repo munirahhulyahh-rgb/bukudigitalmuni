@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Guest Book | SMAN 1 TARAKAN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        :root {
+            --p-blue: #4f46e5;
+            --p-cyan: #06b6d4;
+            --p-purple: #8b5cf6;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            /* BACKGROUND ANIMASI BERWARNA */
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #1e293b;
+            padding-bottom: 50px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; animation: fadeInDown 1s both; }
+
+        /* HEADER GLASSMORPHISM */
+        .header-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 40px;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1.5px;
+        }
+
+        .school-logo {
+            width: 100px; height: 100px;
+            background: white; border-radius: 25px; padding: 12px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            transform: perspective(500px) rotateY(-10deg);
+        }
+
+        /* GRID SYSTEM */
+        .grid-layout { display: grid; grid-template-columns: 400px 1fr; gap: 35px; }
+
+        /* GLASS CARD */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.15); }
+
+        /* INPUTS */
+        .form-group { margin-bottom: 22px; }
+        label { display: block; font-size: 0.75rem; font-weight: 800; color: #6366f1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+        
+        .input-box {
+            width: 100%; padding: 15px 20px; border-radius: 18px;
+            border: 2px solid rgba(99, 102, 241, 0.1); background: rgba(255,255,255,0.7);
+            font-family: inherit; font-weight: 500; font-size: 1rem;
+        }
+        .input-box:focus { outline: none; border-color: #6366f1; background: white; box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+
+        /* BUTTONS */
+        .btn-save {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: white; border: none; padding: 18px; border-radius: 20px;
+            font-weight: 800; font-size: 1.1rem; cursor: pointer; width: 100%;
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-save:hover { transform: scale(1.03); filter: brightness(1.1); box-shadow: 0 20px 40px rgba(99, 102, 241, 0.4); }
+
+        /* TABLE AREA */
+        .toolbar { display: flex; gap: 20px; margin-bottom: 30px; }
+        .search-box { flex: 1; position: relative; }
+        .search-box i { position: absolute; left: 20px; top: 18px; color: #6366f1; font-size: 1.2rem; }
+        .search-input { width: 100%; padding: 16px 20px 16px 55px; border-radius: 20px; border: none; background: var(--glass); font-size: 1rem; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+
+        .btn-export { background: #10b981; color: white; padding: 0 30px; border-radius: 20px; border: none; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+
+        /* DATA ROW STYLE */
+        .guest-row {
+            background: rgba(255,255,255,0.6);
+            margin-bottom: 15px; border-radius: 22px; padding: 20px;
+            display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr 0.5fr;
+            align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.4);
+        }
+        .guest-row:hover { background: white; transform: scale(1.01); }
+
+        .btn-delete { background: #fee2e2; color: #ef4444; border: none; width: 45px; height: 45px; border-radius: 15px; cursor: pointer; }
+        .btn-delete:hover { background: #ef4444; color: white; }
+
+        /* WHATSAPP FLOAT */
+        .wa-float {
+            position: fixed; bottom: 40px; right: 40px;
+            background: white; color: #25d366;
+            padding: 20px 35px; border-radius: 60px;
+            text-decoration: none; font-weight: 900;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: flex; align-items: center; gap: 15px; z-index: 9999;
+            border: 3px solid #25d366;
+        }
+
+        /* FOOTER */
+        footer {
+            margin-top: 80px; text-align: center; color: white;
+            background: rgba(0,0,0,0.2); backdrop-filter: blur(10px);
+            padding: 50px 20px; border-radius: 50px 50px 0 0;
+        }
+
+        #toast {
+            position: fixed; top: 40px; left: 50%; transform: translateX(-50%);
+            background: #1e293b; color: white; padding: 15px 40px;
+            border-radius: 50px; display: none; z-index: 10000; font-weight: 700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div class="container">
+    <header class="header-card animate__animated animate__zoomIn">
+        <div class="header-title">
+            <span style="color: #6366f1; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 3px;">SMAN 1 TARAKAN</span>
+            <h1>Digital Guest Book</h1>
+            <p style="margin-top: 8px; font-weight: 500; color: #64748b;"><i class="fas fa-check-circle" style="color:#10b981"></i> Sistem Pencatatan Tamu Otomatis Berbasis Web</p>
+        </div>
+        <div class="school-info" style="display: flex; gap: 25px; align-items: center;">
+            <div style="text-align: right;">
+                <p style="margin:0; font-size: 0.8rem; font-weight: 700; color: #94a3b8;">TAHUN</p>
+                <p style="margin:0; font-size: 1.4rem; font-weight: 900; color: #1e293b;">2025/2026</p>
+            </div>
+            <img src="logo.png" class="school-logo" alt="Logo">
+        </div>
+    </header>
+
+    <div class="grid-layout">
+        <aside class="animate__animated animate__fadeInLeft" style="animation-delay: 0.2s;">
+            <div class="card">
+                <h2 style="margin-top:0; font-weight: 800; font-size: 1.5rem; margin-bottom: 30px; color: #1e293b;">
+                    <i class="fas fa-pen-nib" style="color: #6366f1; margin-right: 10px;"></i> Check-in Tamu
+                </h2>
+                <form id="guestForm">
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="nama" class="input-box" placeholder="Siapa nama Anda?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Instansi / Alamat</label>
+                        <input type="text" id="instansi" class="input-box" placeholder="Nama organisasi Anda" required>
+                    </div>
+                    <div class="form-group">
+                        <label>No. WhatsApp</label>
+                        <input type="tel" id="kontak" class="input-box" placeholder="0812xxxx" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hari / Tanggal</label>
+                        <input type="date" id="tanggal" class="input-box" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tujuan Kunjungan</label>
+                        <textarea id="keperluan" class="input-box" rows="3" placeholder="Contoh: Koordinasi Kurikulum" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> Simpan Kunjungan
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="animate__animated animate__fadeInRight" style="animation-delay: 0.4s;">
+            <div class="toolbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search" class="search-input" placeholder="Cari data tamu di sini...">
+                </div>
+                <button onclick="exportCSV()" class="btn-export">
+                    <i class="fas fa-download"></i> EXPORT
+                </button>
+            </div>
+
+            <div id="guestList">
+                </div>
+        </main>
+    </div>
+
+    <footer>
+        <div style="font-size: 1rem; margin-bottom: 20px; font-weight: 500;">CREATED WITH PRIDE BY</div>
+        <div style="font-size: 2rem; font-weight: 900; margin-bottom: 10px;">Munirah Afifah Ulyah</div>
+        <div style="display: inline-block; padding: 10px 25px; background: #6366f1; border-radius: 15px; font-weight: 700;">XII-I KESEHATAN 1</div>
+        <p style="margin-top: 30px; opacity: 0.7; font-size: 0.9rem;">&copy; 2026 SMAN 1 TARAKAN. Digitalization for Education Excellence.</p>
+    </footer>
+</div>
+
+<a href="https://wa.me/6285348150025" target="_blank" class="wa-float">
+    <i class="fab fa-whatsapp" style="font-size: 2rem;"></i>
+    <span>ADMIN SEKOLAH</span>
+</a>
+
+<script>
+    let guests = [];
+    const guestList = document.getElementById('guestList');
+    const toast = document.getElementById('toast');
+
+    document.getElementById('tanggal').valueAsDate = new Date();
+
+    function showToast(msg) {
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    document.getElementById('guestForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = {
+            id: Date.now(),
+            nama: document.getElementById('nama').value,
+            instansi: document.getElementById('instansi').value,
+            kontak: document.getElementById('kontak').value,
+            tanggal: document.getElementById('tanggal').value,
+            keperluan: document.getElementById('keperluan').value
+        };
+        guests.unshift(data);
+        renderData(guests);
+        e.target.reset();
+        document.getElementById('tanggal').valueAsDate = new Date();
+        showToast("✓ Sukses! Data Tamu Tersimpan");
+    });
+
+    function deleteGuest(id) {
+        if(confirm("Hapus data kunjungan ini?")) {
+            guests = guests.filter(g => g.id !== id);
+            renderData(guests);
+            showToast("Data Terhapus");
+        }
+    }
+
+    function renderData(data) {
+        guestList.innerHTML = '';
+        if(data.length === 0) {
+            guestList.innerHTML = '<div class="card" style="text-align:center; padding:50px; font-weight:600; color:#94a3b8;">Belum ada tamu yang terdaftar hari ini.</div>';
+            return;
+        }
+
+        data.forEach(g => {
+            guestList.innerHTML += `
+                <div class="guest-row animate__animated animate__fadeInUp">
+                    <div>
+                        <div style="font-weight:800; font-size:1.1rem; color:#1e293b;">${g.nama}</div>
+                        <div style="font-size:0.8rem; color:#6366f1; font-weight:700;">${g.instansi}</div>
+                    </div>
+                    <div style="font-weight:600; font-size:0.9rem;">${g.kontak}</div>
+                    <div style="font-weight:600; font-size:0.9rem; color:#64748b;"><i class="far fa-calendar-alt"></i> ${g.tanggal}</div>
+                    <div style="font-size:0.85rem; font-style:italic; border-left: 2px solid #e2e8f0; padding-left:10px;">${g.keperluan}</div>
+                    <div style="text-align:right;">
+                        <button onclick="deleteGuest(${g.id})" class="btn-delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase();
+        const filtered = guests.filter(g => g.nama.toLowerCase().includes(val) || g.instansi.toLowerCase().includes(val));
+        renderData(filtered);
+    });
+
+    function exportCSV() {
+        if(guests.length === 0) return alert("Data kosong!");
+        let csv = "Nama,Instansi,Kontak,Tanggal,Keperluan\n";
+        guests.forEach(g => { csv += `"${g.nama}","${g.instansi}","${g.kontak}","${g.tanggal}","${g.keperluan}"\n`; });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = window.URL.createObjectURL(blob);
+        a.download = 'Data_Tamu_SMAN1TRK.csv';
+        a.click();
+    }
+
+    renderData(guests);
+</script>
+
+</body>
+</html>
